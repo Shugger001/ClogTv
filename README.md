@@ -224,6 +224,17 @@ API routes also return `x-request-id` response headers for traceability across c
 
 For production-ready rollout steps, see `docs/DEPLOYMENT.md`.
 
+### GitHub
+
+Create an **empty** repository on GitHub (no README/license if you already have commits on `main`). Ensure `.env.local` and other secrets stay untracked; only `.env.example` should be committed.
+
+```bash
+git remote add origin https://github.com/<YOUR_USER>/<YOUR_REPO>.git
+git push -u origin main
+```
+
+Use your SSH remote URL instead if you prefer.
+
 Operations docs:
 
 - Deployment guide: `docs/DEPLOYMENT.md`
