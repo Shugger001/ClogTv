@@ -1,0 +1,27 @@
+{
+  "name": "CLOG TV World Platform",
+  "short_name": "CLOG TV",
+  "description": "Premium global news and entertainment platform with realtime newsroom workflows.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#050505",
+  "theme_color": "#991b1b",
+  "icons": [
+    {
+      "src": "/clog-logo-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/clog-logo-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/clog-logo-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
