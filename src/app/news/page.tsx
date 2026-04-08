@@ -78,7 +78,7 @@ export default async function NewsPage({ searchParams }: NewsPageProps) {
   return (
     <div className="min-h-screen text-foreground">
       <Header />
-      <main className="mx-auto max-w-7xl px-6 py-8">
+      <main id="main-content" aria-label="News discovery content" className="mx-auto max-w-7xl px-6 py-8">
         <section className="ui-card density-card">
           <h1 className="text-3xl font-semibold">Search & Discovery</h1>
           <form className="mt-4 grid gap-3 md:grid-cols-[1fr_auto_auto_auto]">
@@ -138,7 +138,7 @@ export default async function NewsPage({ searchParams }: NewsPageProps) {
               ))}
             </div>
           </article>
-          <aside className="space-y-5">
+          <aside className="space-y-5" aria-label="News discovery sidebar">
             <article className="ui-card density-card">
               <h3 className="text-sm uppercase tracking-[0.2em] text-red-300">Trending now</h3>
               <div className="mt-2 space-y-2">

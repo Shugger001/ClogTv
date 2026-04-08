@@ -21,14 +21,22 @@ const LiveTvPanel = dynamic(
   () => import("@/components/live-tv-panel").then((mod) => mod.LiveTvPanel),
   { loading: () => <div className="glass-panel h-56 rounded-2xl animate-pulse" /> },
 );
+const HomeMostReadRail = dynamic(
+  () => import("@/components/home-most-read-rail").then((mod) => mod.HomeMostReadRail),
+  { loading: () => <div className="ui-card density-card h-72 animate-pulse" /> },
+);
 
 export default function Home() {
   return (
     <div className="min-h-screen text-foreground">
       <Header />
       <BreakingTicker />
-      <main className="density-grid mx-auto grid w-full max-w-7xl px-6 py-8 lg:grid-cols-[1.45fr_0.9fr]">
-        <section className="space-y-5">
+      <main
+        id="main-content"
+        aria-label="Homepage main content"
+        className="density-grid mx-auto grid w-full max-w-7xl px-6 py-8 lg:grid-cols-[1.45fr_0.9fr]"
+      >
+        <section className="space-y-5" aria-label="Top stories and editorial feed">
           <article className="glass-panel rounded-2xl p-7 md:p-8">
             <p className="kicker">Global Lead</p>
             <h1 className="headline-display mt-3 text-4xl leading-tight font-semibold text-foreground md:text-5xl">
@@ -39,6 +47,13 @@ export default function Home() {
               multi-author collaboration, and live streaming experiences tailored for modern
               broadcast and digital audiences.
             </p>
+            <div className="ui-muted mt-4 flex flex-wrap items-center gap-3 text-xs uppercase tracking-[0.17em]">
+              <span>By ClogTv World Desk</span>
+              <span className="text-[10px]">|</span>
+              <span>Updated 12 minutes ago</span>
+              <span className="text-[10px]">|</span>
+              <span>4 min read</span>
+            </div>
             <div className="mt-6 flex flex-wrap gap-3">
               <span className="hero-chip rounded-full border border-white/20 bg-white/[0.04] px-3 py-1 text-xs uppercase tracking-widest text-white/75">
                 Realtime Ticker
@@ -56,8 +71,9 @@ export default function Home() {
           <HomepageSections />
           <EditorialBoard />
         </section>
-        <aside className="space-y-5">
+        <aside className="space-y-5" aria-label="Live and most-read sidebar">
           <LiveTvPanel />
+          <HomeMostReadRail />
           <SidebarAds />
         </aside>
       </main>

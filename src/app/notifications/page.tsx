@@ -24,7 +24,7 @@ export default async function NotificationsPage() {
   return (
     <div className="min-h-screen text-foreground">
       <Header />
-      <main className="mx-auto max-w-5xl px-6 py-8">
+      <main id="main-content" aria-label="Notifications content" className="mx-auto max-w-5xl px-6 py-8">
         <section className="ui-card density-card">
           <p className="text-xs uppercase tracking-[0.2em] text-red-300">Notifications</p>
           <h1 className="mt-2 text-3xl font-semibold">Breaking alerts</h1>

@@ -3,9 +3,23 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useMemo } from "react";
+import { formatDistanceToNow } from "date-fns";
 import { motion } from "framer-motion";
 import { useArticles } from "@/hooks/use-articles";
 import { Skeleton } from "@/components/ui/skeleton";
+
+function storyLabel(story: {
+  is_breaking?: boolean;
+  priority?: string;
+  tags?: string[];
+  video_url?: string | null;
+}) {
+  if (story.is_breaking || story.priority === "breaking") return "Live";
+  if (story.tags?.some((tag) => tag.toLowerCase() === "analysis")) return "Analysis";
+  if (story.tags?.some((tag) => tag.toLowerCase() === "explainer")) return "Explainer";
+  if (story.video_url) return "Video";
+  return null;
+}
 
 export function HomepageSections() {
   const { data = [], isLoading } = useArticles();
@@ -28,8 +42,13 @@ export function HomepageSections() {
   return (
     <div className="space-y-5">
       <section className="ui-card density-card">
-        <h2 className="kicker">Top stories grid</h2>
-        <div className="mt-3 flex snap-x gap-3 overflow-x-auto pb-1 md:grid md:overflow-visible md:pb-0 md:snap-none md:grid-cols-3">
+        <div className="editorial-section-head">
+          <h2 className="kicker">Top stories</h2>
+          <Link href="/news" className="ui-muted text-xs uppercase tracking-[0.18em] hover:text-foreground">
+            See all
+          </Link>
+        </div>
+        <div className="editorial-content-flow flex snap-x gap-3 overflow-x-auto pb-1 md:grid md:overflow-visible md:pb-0 md:snap-none md:grid-cols-3">
           {isLoading
             ? Array.from({ length: 6 }).map((_, index) => (
                 <div key={index} className="home-list-card min-w-[260px] rounded-lg border px-3 py-3 md:min-w-0">
@@ -54,8 +73,18 @@ export function HomepageSections() {
                   className="mb-2 h-32 w-full rounded-md object-cover"
                 />
               ) : null}
-              <p className="headline-compact font-medium">{story.title}</p>
-              <p className="ui-muted mt-1 text-xs">{story.category}</p>
+              <div className="flex items-center gap-2">
+                <p className="text-[10px] uppercase tracking-[0.2em] text-red-300">{story.category}</p>
+                {storyLabel(story) ? <span className="story-badge">{storyLabel(story)}</span> : null}
+              </div>
+              <p className="headline-compact story-title-clamp-2 mt-1 font-medium">{story.title}</p>
+              <p className="story-meta-row mt-1">
+                {story.published_at
+                  ? formatDistanceToNow(new Date(story.published_at), { addSuffix: true })
+                  : "Updated recently"}
+                <span className="mx-1 text-[10px]">|</span>
+                {Math.max(story.read_time ?? 1, 1)} min read
+              </p>
             </Link>
           ))}
         </div>
@@ -69,8 +98,13 @@ export function HomepageSections() {
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.28 }}
         >
-          <h2 className="kicker">Latest feed</h2>
-          <div className="mt-3 space-y-2">
+          <div className="editorial-section-head">
+            <h2 className="kicker">Latest updates</h2>
+            <Link href="/news" className="ui-muted text-xs uppercase tracking-[0.18em] hover:text-foreground">
+              Live feed
+            </Link>
+          </div>
+          <div className="editorial-content-flow space-y-2">
             {isLoading
               ? Array.from({ length: 4 }).map((_, index) => (
                   <div key={index} className="home-list-card block rounded-lg border px-3 py-3">
@@ -91,21 +125,48 @@ export function HomepageSections() {
                     className="mb-2 h-28 w-full rounded-md object-cover"
                   />
                 ) : null}
-                <p className="headline-compact font-medium">{story.title}</p>
-                <p className="ui-muted mt-1 text-xs">{story.category}</p>
+                <div className="flex items-center gap-2">
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-red-300">{story.category}</p>
+                  {storyLabel(story) ? <span className="story-badge">{storyLabel(story)}</span> : null}
+                </div>
+                <p className="headline-compact story-title-clamp-2 mt-1 font-medium">{story.title}</p>
+                <p className="story-meta-row mt-1">
+                  {story.published_at
+                    ? formatDistanceToNow(new Date(story.published_at), { addSuffix: true })
+                    : "Updated recently"}
+                  <span className="mx-1 text-[10px]">|</span>
+                  {Math.max(story.read_time ?? 1, 1)} min read
+                </p>
               </Link>
             ))}
           </div>
         </motion.article>
         <article className="ui-card density-card">
-          <h2 className="kicker">Trending sidebar</h2>
-          <div className="mt-3 space-y-2">
+          <div className="editorial-section-head">
+            <h2 className="kicker">Most read</h2>
+            <Link href="/news" className="ui-muted text-xs uppercase tracking-[0.18em] hover:text-foreground">
+              This hour
+            </Link>
+          </div>
+          <div className="editorial-content-flow story-list-tight space-y-2">
             {isLoading
               ? Array.from({ length: 5 }).map((_, index) => <Skeleton key={index} className="h-4 w-full" />)
               : null}
-            {trending.map((story) => (
-              <Link key={story.id} href={`/news/${story.slug}`} className="block text-sm hover:text-red-300">
-                {story.title}
+            {trending.map((story, index) => (
+              <Link
+                key={story.id}
+                href={`/news/${story.slug}`}
+                className="flex items-start gap-3 rounded-md px-1 py-1.5 transition hover:bg-black/5 hover:text-red-300"
+              >
+                <span className="mt-0.5 text-xs font-semibold text-red-300">{index + 1}</span>
+                <span>
+                  <span className="story-title-clamp-2 text-sm">{story.title}</span>
+                  <span className="story-meta-row block text-[11px]">
+                    {story.published_at
+                      ? formatDistanceToNow(new Date(story.published_at), { addSuffix: true })
+                      : "Updated recently"}
+                  </span>
+                </span>
               </Link>
             ))}
           </div>
@@ -113,8 +174,13 @@ export function HomepageSections() {
       </section>
 
       <section className="ui-card density-card">
-        <h2 className="kicker">Category sections</h2>
-        <div className="mt-3 grid gap-3 md:grid-cols-3">
+        <div className="editorial-section-head">
+          <h2 className="kicker">Sections</h2>
+          <Link href="/news" className="ui-muted text-xs uppercase tracking-[0.18em] hover:text-foreground">
+            Browse
+          </Link>
+        </div>
+        <div className="editorial-content-flow grid gap-3 md:grid-cols-3">
           {categoryHighlights.map(({ category, story }) => (
             <Link
               key={category}
@@ -131,16 +197,29 @@ export function HomepageSections() {
                   className="mb-2 h-24 w-full rounded-md object-cover"
                 />
               ) : null}
-              <p className="text-xs uppercase tracking-[0.2em] text-red-300">{category}</p>
-              <p className="mt-1 text-sm font-medium">{story?.title}</p>
+              <div className="flex items-center gap-2">
+                <p className="text-xs uppercase tracking-[0.2em] text-red-300">{category}</p>
+                {storyLabel(story ?? {}) ? <span className="story-badge">{storyLabel(story ?? {})}</span> : null}
+              </div>
+              <p className="story-title-clamp-2 mt-1 text-sm font-medium">{story?.title}</p>
+              <p className="story-meta-row mt-1 text-xs">
+                {story?.published_at
+                  ? formatDistanceToNow(new Date(story.published_at), { addSuffix: true })
+                  : "Updated recently"}
+              </p>
             </Link>
           ))}
         </div>
       </section>
 
       <section className="ui-card density-card">
-        <h2 className="kicker">Video section</h2>
-        <div className="mt-3 grid gap-3 md:grid-cols-2">
+        <div className="editorial-section-head">
+          <h2 className="kicker">Video and clips</h2>
+          <Link href="/watch-live" className="ui-muted text-xs uppercase tracking-[0.18em] hover:text-foreground">
+            Watch live
+          </Link>
+        </div>
+        <div className="editorial-content-flow grid gap-3 md:grid-cols-2">
           {videoStories.map((story) => (
             <Link key={story.id} href={`/news/${story.slug}`} className="home-list-card rounded-lg border px-3 py-3">
               {story.featured_image ? (
@@ -153,8 +232,16 @@ export function HomepageSections() {
                   className="mb-2 h-28 w-full rounded-md object-cover"
                 />
               ) : null}
-              <p className="font-medium">{story.title}</p>
-              <p className="ui-muted mt-1 text-xs">{story.video_provider ?? "external"} video</p>
+              <div className="flex items-center gap-2">
+                <p className="text-xs uppercase tracking-[0.2em] text-red-300">Video</p>
+                <span className="story-badge">{story.video_provider ?? "external"}</span>
+              </div>
+              <p className="story-title-clamp-2 mt-1 font-medium">{story.title}</p>
+              <p className="story-meta-row mt-1 text-xs">
+                {story.published_at
+                  ? formatDistanceToNow(new Date(story.published_at), { addSuffix: true })
+                  : "Updated recently"}
+              </p>
             </Link>
           ))}
         </div>

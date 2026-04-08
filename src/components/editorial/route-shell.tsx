@@ -21,7 +21,7 @@ const nav = [
 export function RouteShell({ title, role, fullName, children }: RouteShellProps) {
   return (
     <div className="min-h-screen text-foreground">
-      <header className="ui-surface-strong border-b backdrop-blur-xl">
+      <header className="ui-surface-strong border-b backdrop-blur-xl" aria-label="Editorial header">
         <div className="mx-auto flex w-full max-w-7xl flex-col gap-3 px-6 py-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <div className="mb-1 flex items-center gap-2">
@@ -45,7 +45,10 @@ export function RouteShell({ title, role, fullName, children }: RouteShellProps)
             <SignOutButton />
           </div>
         </div>
-        <nav className="ui-muted mx-auto flex w-full max-w-7xl gap-2 px-6 pb-4 text-xs uppercase tracking-widest">
+        <nav
+          className="ui-muted mx-auto flex w-full max-w-7xl gap-2 px-6 pb-4 text-xs uppercase tracking-widest"
+          aria-label="Editorial section navigation"
+        >
           {nav.map((item) => (
             <Link
               key={item.href}
@@ -57,7 +60,9 @@ export function RouteShell({ title, role, fullName, children }: RouteShellProps)
           ))}
         </nav>
       </header>
-      <main className="mx-auto w-full max-w-7xl px-6 py-6">{children}</main>
+      <main id="main-content" aria-label="Editorial page content" className="mx-auto w-full max-w-7xl px-6 py-6">
+        {children}
+      </main>
     </div>
   );
 }

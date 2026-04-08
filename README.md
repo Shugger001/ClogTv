@@ -235,6 +235,14 @@ git push -u origin main
 
 Use your SSH remote URL instead if you prefer.
 
+### Vercel
+
+1. Import the Git repo in the Vercel dashboard (**Add New → Project**).
+2. Set environment variables from `.env.example` (at minimum the `NEXT_PUBLIC_SUPABASE_*` pair); keep secrets in Vercel only.
+3. Deploy, then add your Vercel URL to Supabase **Authentication → URL configuration** (Site URL + Redirect URLs).
+
+Full steps: [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) (section 4).
+
 Operations docs:
 
 - Deployment guide: `docs/DEPLOYMENT.md`

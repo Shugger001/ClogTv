@@ -11,9 +11,9 @@ const channels = [
 export function LiveTvPanel() {
   return (
     <section className="glass-panel rounded-2xl p-5">
-      <div className="mb-4 flex items-center justify-between">
+      <div className="editorial-section-head mb-4">
         <h2 className="kicker">Live TV</h2>
-        <span className="rounded-full border border-red-300/35 bg-red-500/15 px-2 py-1 text-xs text-red-200">
+        <span className="live-status-pill rounded-full border px-2 py-1 text-xs">
           Streaming
         </span>
       </div>
@@ -25,7 +25,7 @@ export function LiveTvPanel() {
       >
         <div className="live-preview-overlay flex h-full items-end rounded-lg bg-gradient-to-t from-black/65 via-black/35 to-transparent p-4">
           <div>
-            <p className="text-xs uppercase tracking-wider text-red-300">Now Live</p>
+            <p className="live-now-label text-xs uppercase tracking-wider">Now Live</p>
             <p className="headline-compact text-lg font-medium text-foreground">World Tonight: Special Coverage</p>
           </div>
         </div>
@@ -38,9 +38,9 @@ export function LiveTvPanel() {
           >
             <div>
               <p className="text-foreground">{channel.name}</p>
-              <p className="ui-muted text-xs">{channel.region}</p>
+              <p className="story-meta-row">{channel.region}</p>
             </div>
-            <span className="ui-muted text-xs">{channel.status}</span>
+            <span className="story-meta-row">{channel.status}</span>
           </li>
         ))}
       </ul>

@@ -22,6 +22,9 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full antialiased">
       <body className="min-h-full flex flex-col bg-black">
+        <a href="#main-content" className="skip-link">
+          Skip to content
+        </a>
         <AppProviders>{children}</AppProviders>
       </body>
     </html>

@@ -29,7 +29,7 @@ export default async function BookmarksPage() {
   return (
     <div className="min-h-screen text-foreground">
       <Header />
-      <main className="mx-auto max-w-5xl px-6 py-8">
+      <main id="main-content" aria-label="Bookmarks content" className="mx-auto max-w-5xl px-6 py-8">
         <section className="ui-card density-card">
           <p className="kicker">Bookmarks</p>
           <h1 className="headline-compact mt-2 text-3xl font-semibold">Saved stories</h1>

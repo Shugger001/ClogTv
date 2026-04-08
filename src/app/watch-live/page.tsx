@@ -4,7 +4,7 @@ export default function WatchLivePage() {
   return (
     <div className="min-h-screen text-foreground">
       <Header />
-      <main className="mx-auto max-w-6xl px-6 py-8">
+      <main id="main-content" aria-label="Watch live content" className="mx-auto max-w-6xl px-6 py-8">
         <section className="ui-card density-card">
           <p className="text-xs uppercase tracking-[0.2em] text-red-300">Watch Live TV</p>
           <h1 className="mt-2 text-3xl font-semibold">Global live stream</h1>

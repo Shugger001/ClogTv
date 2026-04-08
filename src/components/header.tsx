@@ -1,77 +1,252 @@
+"use client";
+
+import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Menu, X } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
 import { HeaderAccount } from "@/components/header-account";
 import { PreferencesControls } from "@/components/ui/preferences-controls";
 
 export function Header() {
+  const pathname = usePathname();
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const isActive = (href: string) => pathname === href || (href !== "/" && pathname.startsWith(href));
+  const closeMobileMenu = useCallback(() => {
+    setMobileOpen(false);
+    requestAnimationFrame(() => {
+      menuButtonRef.current?.focus();
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!mobileOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const focusable = menuRef.current?.querySelectorAll<HTMLElement>(
+      'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
+    );
+    const first = focusable?.[0];
+    const last = focusable?.[focusable.length - 1];
+    first?.focus();
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        closeMobileMenu();
+        return;
+      }
+
+      if (event.key === "Tab" && first && last) {
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [mobileOpen, closeMobileMenu]);
+
+  const navClass = (href: string) =>
+    `header-nav-link rounded-full px-3 py-1.5 transition hover:bg-white/10 hover:text-foreground ${
+      isActive(href)
+        ? "header-nav-link-active bg-[color:var(--surface)] text-foreground"
+        : ""
+    }`;
+
   return (
-    <header className="ui-surface-strong sticky top-0 z-50 border-b backdrop-blur-xl">
-      <div className="mx-auto grid w-full max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-2 px-4 py-2 md:gap-x-4 md:px-6 md:py-3">
-        <Link
-          href="/"
-          className="flex min-h-10 min-w-0 items-center gap-2 sm:gap-3"
-        >
-          <Image
-            src="/clog-logo.png"
-            alt="CLOG TV logo"
-            width={34}
-            height={34}
-            className="h-8 w-8 shrink-0 rounded-full"
-            priority
-          />
-          <span className="min-w-0 truncate text-sm font-medium tracking-[0.2em] sm:tracking-[0.33em]">
-            CLOG TV WORLD
-          </span>
-        </Link>
-        <div className="flex shrink-0 items-center justify-self-end gap-2 md:gap-3">
-          <div className="hidden items-center gap-2 md:flex md:gap-3">
-            <nav className="ui-muted hidden items-center gap-2 rounded-full border px-3 py-1.5 text-xs uppercase tracking-widest xl:flex">
-              <Link href="/" className="rounded-full px-3 py-1.5 transition hover:bg-white/10 hover:text-foreground">
-                World
-              </Link>
-              <Link href="/news" className="rounded-full px-3 py-1.5 transition hover:bg-white/10 hover:text-foreground">
-                News
-              </Link>
-              <Link
-                href="/newsroom"
-                className="rounded-full px-3 py-1.5 transition hover:bg-white/10 hover:text-foreground"
+    <header className="ui-surface-strong sticky top-0 z-50 border-b backdrop-blur-xl" aria-label="Site header">
+      <div className="mx-auto w-full max-w-7xl px-4 py-2 md:px-6 md:py-3">
+        <div className="flex min-h-10 items-center justify-between gap-3">
+          <Link href="/" className="flex min-w-0 items-center gap-2 sm:gap-3">
+            <Image
+              src="/clog-logo.png"
+              alt="CLOG TV logo"
+              width={34}
+              height={34}
+              className="h-8 w-8 shrink-0 rounded-full"
+              priority
+            />
+            <span className="truncate text-sm font-medium tracking-[0.18em] sm:tracking-[0.28em]">
+              CLOG TV WORLD
+            </span>
+          </Link>
+          <div className="flex shrink-0 items-center gap-2 md:gap-3">
+            <button
+              ref={menuButtonRef}
+              type="button"
+              onClick={() => setMobileOpen((prev) => !prev)}
+              className="header-icon-btn flex h-9 w-9 items-center justify-center rounded-full border border-[color:var(--border)] bg-[color:var(--surface)] text-foreground md:hidden"
+              aria-label={mobileOpen ? "Close menu" : "Open menu"}
+              aria-expanded={mobileOpen}
+            >
+              {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+            </button>
+            <HeaderAccount />
+          </div>
+        </div>
+        <AnimatePresence>
+          {mobileOpen ? (
+            <>
+              <motion.button
+                type="button"
+                aria-label="Close mobile menu overlay"
+                onClick={closeMobileMenu}
+                className="fixed inset-0 z-40 bg-black/30 md:hidden"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              />
+              <motion.div
+                ref={menuRef}
+                className="ui-card relative z-50 mt-2 space-y-3 p-3 md:hidden"
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.18 }}
+                role="dialog"
+                aria-modal="true"
+                aria-label="Mobile navigation menu"
               >
-                Newsroom
-              </Link>
-              <Link
-                href="/watch-live"
-                className="rounded-full px-3 py-1.5 transition hover:bg-white/10 hover:text-foreground"
-              >
-                Watch Live
-              </Link>
-              <Link href="/live" className="rounded-full px-3 py-1.5 transition hover:bg-white/10 hover:text-foreground">
-                Live
-              </Link>
-              <Link href="/admin" className="rounded-full px-3 py-1.5 transition hover:bg-white/10 hover:text-foreground">
-                Admin
-              </Link>
-              <Link
-                href="/notifications"
-                className="rounded-full px-3 py-1.5 transition hover:bg-white/10 hover:text-foreground"
-              >
-                Alerts
-              </Link>
-              <Link
-                href="/bookmarks"
-                className="rounded-full px-3 py-1.5 transition hover:bg-white/10 hover:text-foreground"
-              >
-                Bookmarks
-              </Link>
-              <Link href="/" className="rounded-full px-3 py-1.5 transition hover:bg-white/10 hover:text-foreground">
-                Business
-              </Link>
-              <Link href="/" className="rounded-full px-3 py-1.5 transition hover:bg-white/10 hover:text-foreground">
-                Culture
-              </Link>
-            </nav>
+                <nav className="grid grid-cols-2 gap-2 text-xs uppercase tracking-[0.12em]" aria-label="Mobile site navigation">
+                  <Link
+                    href="/"
+                    className={navClass("/")}
+                    aria-current={isActive("/") ? "page" : undefined}
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    World
+                  </Link>
+                  <Link
+                    href="/news"
+                    className={navClass("/news")}
+                    aria-current={isActive("/news") ? "page" : undefined}
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    News
+                  </Link>
+                  <Link
+                    href="/newsroom"
+                    className={navClass("/newsroom")}
+                    aria-current={isActive("/newsroom") ? "page" : undefined}
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    Newsroom
+                  </Link>
+                  <Link
+                    href="/watch-live"
+                    className={navClass("/watch-live")}
+                    aria-current={isActive("/watch-live") ? "page" : undefined}
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    Watch Live
+                  </Link>
+                  <Link
+                    href="/live"
+                    className={navClass("/live")}
+                    aria-current={isActive("/live") ? "page" : undefined}
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    Live
+                  </Link>
+                  <Link
+                    href="/admin"
+                    className={navClass("/admin")}
+                    aria-current={isActive("/admin") ? "page" : undefined}
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    Admin
+                  </Link>
+                  <Link
+                    href="/notifications"
+                    className={navClass("/notifications")}
+                    aria-current={isActive("/notifications") ? "page" : undefined}
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    Alerts
+                  </Link>
+                  <Link
+                    href="/bookmarks"
+                    className={navClass("/bookmarks")}
+                    aria-current={isActive("/bookmarks") ? "page" : undefined}
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    Bookmarks
+                  </Link>
+                </nav>
+                <PreferencesControls />
+              </motion.div>
+            </>
+          ) : null}
+        </AnimatePresence>
+        <div className="mt-2 hidden items-center justify-between gap-3 md:flex">
+          <nav
+            className="ui-muted header-nav-shell flex min-w-0 flex-1 items-center gap-1.5 overflow-x-auto rounded-full border px-2 py-1.5 text-xs uppercase tracking-[0.15em] lg:gap-2 lg:px-3"
+            aria-label="Primary site navigation"
+          >
+            <Link href="/" className={navClass("/")} aria-current={isActive("/") ? "page" : undefined}>
+              World
+            </Link>
+            <Link href="/news" className={navClass("/news")} aria-current={isActive("/news") ? "page" : undefined}>
+              News
+            </Link>
+            <Link
+              href="/newsroom"
+              className={navClass("/newsroom")}
+              aria-current={isActive("/newsroom") ? "page" : undefined}
+            >
+              Newsroom
+            </Link>
+            <Link
+              href="/watch-live"
+              className={navClass("/watch-live")}
+              aria-current={isActive("/watch-live") ? "page" : undefined}
+            >
+              Watch Live
+            </Link>
+            <Link href="/live" className={navClass("/live")} aria-current={isActive("/live") ? "page" : undefined}>
+              Live
+            </Link>
+            <Link href="/admin" className={navClass("/admin")} aria-current={isActive("/admin") ? "page" : undefined}>
+              Admin
+            </Link>
+            <Link
+              href="/notifications"
+              className={navClass("/notifications")}
+              aria-current={isActive("/notifications") ? "page" : undefined}
+            >
+              Alerts
+            </Link>
+            <Link
+              href="/bookmarks"
+              className={navClass("/bookmarks")}
+              aria-current={isActive("/bookmarks") ? "page" : undefined}
+            >
+              Bookmarks
+            </Link>
+            <Link href="/" className={navClass("/")} aria-current={isActive("/") ? "page" : undefined}>
+              Business
+            </Link>
+            <Link href="/" className={navClass("/")} aria-current={isActive("/") ? "page" : undefined}>
+              Culture
+            </Link>
+          </nav>
+          <div className="shrink-0">
             <PreferencesControls />
           </div>
-          <HeaderAccount />
         </div>
       </div>
     </header>

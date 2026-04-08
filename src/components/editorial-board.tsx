@@ -12,7 +12,9 @@ export function EditorialBoard() {
 
   return (
     <section className="glass-panel rounded-2xl p-5">
-      <h2 className="kicker mb-4">Editorial Desk</h2>
+      <div className="editorial-section-head">
+        <h2 className="kicker">Editorial Desk</h2>
+      </div>
       <div className="grid gap-3 md:grid-cols-2">
         <div className="space-y-2">
           {isLoading
@@ -31,7 +33,7 @@ export function EditorialBoard() {
               className="home-list-card w-full rounded-xl border border-white/10 bg-white/[0.04] px-3.5 py-3.5 text-left transition hover:border-white/20 hover:bg-white/[0.08]"
             >
               <p className="headline-compact text-sm font-medium text-foreground">{story.title}</p>
-              <p className="ui-muted mt-1 text-xs">
+              <p className="story-meta-row mt-1">
                 {story.category} -{" "}
                 {story.published_at
                   ? formatDistanceToNow(new Date(story.published_at), { addSuffix: true })

@@ -55,18 +55,54 @@ Optional DB security verification:
 psql "$SUPABASE_DB_URL" -f supabase/tests/articles_rls_verification.sql
 ```
 
-## 4) Deployment target (Vercel recommended)
+## 4) Link and deploy on Vercel
 
-1. Connect repository in Vercel.
-2. Set all production env vars in project settings.
-3. Trigger deploy.
-4. Validate key routes:
-   - `/`
-   - `/news`
-   - `/newsroom`
-   - `/live`
-   - `/admin`
-   - `/bookmarks`
+### 4a — Dashboard (recommended)
+
+1. Push this repo to GitHub (or GitLab / Bitbucket) if it is not already remote-hosted.
+2. In [Vercel](https://vercel.com): **Add New… → Project → Import** your repository.
+3. **Framework preset**: Vercel should detect **Next.js**. Defaults are fine:
+   - **Build Command**: `npm run build` (or leave default)
+   - **Install Command**: `npm install`
+   - **Output**: handled by Next.js (no manual static output)
+4. **Environment Variables** (Production, and Preview if you want staging parity): add every name from `.env.example` in the repo root that you use in production. Paste values in the Vercel UI only — never commit real secrets.
+   - Required for core app behavior: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
+   - Optional: AI, newsletter, ads, and timeout vars as documented in section 1.
+   - Use **Production** vs **Preview** tabs if Preview should use a different Supabase project or keys.
+5. Click **Deploy**. Note the assigned URL (e.g. `https://your-app.vercel.app`).
+
+### 4b — Supabase Auth URLs (required for login in production)
+
+In Supabase → **Authentication → URL configuration**:
+
+- Set **Site URL** to your Vercel production URL (or your custom domain).
+- Add **Redirect URLs** for:
+  - `https://<your-project>.vercel.app/**`
+  - Your custom domain patterns if you add one later.
+
+Without this, OAuth/email redirects may still point at localhost.
+
+### 4c — CLI (optional)
+
+If you prefer linking from the terminal:
+
+```bash
+npx vercel login
+npx vercel link
+```
+
+This creates a local `.vercel` directory (already listed in `.gitignore`). Configure env vars in the dashboard or with `vercel env add`; do not commit `.env.local` or `.vercel` project files with secrets.
+
+### 4d — Smoke test after deploy
+
+Validate key routes:
+
+- `/`
+- `/news`
+- `/newsroom`
+- `/live`
+- `/admin`
+- `/bookmarks`
 
 ## 5) Post-deploy checks
 
