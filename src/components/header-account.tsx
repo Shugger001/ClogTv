@@ -34,7 +34,13 @@ function metaAvatarUrl(meta: Record<string, unknown>): string | null {
 const shellClass =
   "flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[color:var(--border)] bg-[color:var(--surface)] text-foreground/85 transition hover:bg-[color:var(--surface-strong)] hover:text-foreground";
 
-export function HeaderAccount() {
+interface HeaderAccountProps {
+  /** Override trigger styling (e.g. red site header). */
+  triggerClassName?: string;
+}
+
+export function HeaderAccount({ triggerClassName }: HeaderAccountProps) {
+  const triggerShell = triggerClassName ?? shellClass;
   const router = useRouter();
   const [supabase] = useState(() => createSupabaseBrowserClient());
   const [userId, setUserId] = useState<string | null>(null);
@@ -112,7 +118,7 @@ export function HeaderAccount() {
     return (
       <Link
         href="/auth/login"
-        className={shellClass}
+        className={triggerShell}
         aria-label="Sign in"
       >
         <UserRound className="h-4 w-4" strokeWidth={1.75} />
@@ -122,7 +128,7 @@ export function HeaderAccount() {
 
   if (!userId) {
     return (
-      <Link href="/auth/login" className={shellClass} aria-label="Sign in">
+      <Link href="/auth/login" className={triggerShell} aria-label="Sign in">
         <UserRound className="h-4 w-4" strokeWidth={1.75} />
       </Link>
     );
@@ -136,7 +142,7 @@ export function HeaderAccount() {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className={`${shellClass} overflow-hidden p-0 ring-2 ring-transparent hover:ring-[color:var(--border)]`}
+        className={`${triggerShell} overflow-hidden p-0 ring-2 ring-transparent hover:ring-white/40`}
         aria-expanded={open}
         aria-haspopup="menu"
         aria-label="Account menu"

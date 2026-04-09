@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
@@ -61,41 +60,37 @@ export function Header() {
   }, [mobileOpen, closeMobileMenu]);
 
   const navClass = (href: string) =>
-    `header-nav-link rounded-full px-3 py-1.5 transition hover:bg-white/10 hover:text-foreground ${
-      isActive(href)
-        ? "header-nav-link-active bg-[color:var(--surface)] text-foreground"
-        : ""
+    `header-nav-link rounded-full px-3 py-1.5 text-white/90 transition hover:bg-white/15 hover:text-white ${
+      isActive(href) ? "header-nav-link-active bg-white/15 text-white" : ""
     }`;
 
   return (
-    <header className="ui-surface-strong sticky top-0 z-50 border-b backdrop-blur-xl" aria-label="Site header">
+    <header
+      className="site-header-brand sticky top-0 z-50 border-b border-red-900/35 bg-red-700 text-white shadow-sm"
+      aria-label="Site header"
+    >
       <div className="mx-auto w-full max-w-7xl px-4 py-2 md:px-6 md:py-3">
         <div className="flex min-h-10 items-center justify-between gap-3">
-          <Link href="/" className="flex min-w-0 items-center gap-2 sm:gap-3">
-            <Image
-              src="/clog-logo.png"
-              alt="CLOG TV logo"
-              width={34}
-              height={34}
-              className="h-8 w-8 shrink-0 rounded-full"
-              priority
-            />
-            <span className="truncate text-sm font-medium tracking-[0.18em] sm:tracking-[0.28em]">
-              CLOG TV WORLD
-            </span>
+          <Link
+            href="/"
+            className="min-w-0 truncate text-sm font-medium tracking-[0.18em] text-white sm:tracking-[0.28em]"
+          >
+            CLOG TV WORLD
           </Link>
           <div className="flex shrink-0 items-center gap-2 md:gap-3">
             <button
               ref={menuButtonRef}
               type="button"
               onClick={() => setMobileOpen((prev) => !prev)}
-              className="header-icon-btn flex h-9 w-9 items-center justify-center rounded-full border border-[color:var(--border)] bg-[color:var(--surface)] text-foreground md:hidden"
+              className="header-icon-btn flex h-9 w-9 items-center justify-center rounded-full border border-white/35 bg-white/10 text-white md:hidden"
               aria-label={mobileOpen ? "Close menu" : "Open menu"}
               aria-expanded={mobileOpen}
             >
               {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
             </button>
-            <HeaderAccount />
+            <HeaderAccount
+              triggerClassName="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/35 bg-white/10 text-white transition hover:bg-white/20 hover:text-white"
+            />
           </div>
         </div>
         <AnimatePresence>
@@ -194,7 +189,7 @@ export function Header() {
         </AnimatePresence>
         <div className="mt-2 hidden items-center justify-between gap-3 md:flex">
           <nav
-            className="ui-muted header-nav-shell flex min-w-0 flex-1 items-center gap-1.5 overflow-x-auto rounded-full border px-2 py-1.5 text-xs uppercase tracking-[0.15em] lg:gap-2 lg:px-3"
+            className="header-nav-shell flex min-w-0 flex-1 items-center gap-1.5 overflow-x-auto rounded-full border border-white/25 bg-black/15 px-2 py-1.5 text-xs uppercase tracking-[0.15em] text-white/90 lg:gap-2 lg:px-3"
             aria-label="Primary site navigation"
           >
             <Link href="/" className={navClass("/")} aria-current={isActive("/") ? "page" : undefined}>

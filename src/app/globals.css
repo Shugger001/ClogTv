@@ -263,6 +263,16 @@ html[data-theme="light"] .ui-card {
   background: rgba(239, 68, 68, 0.95);
 }
 
+header.site-header-brand .header-nav-link-active::after {
+  background: rgba(255, 255, 255, 0.92);
+}
+
+header.site-header-brand .header-nav-link:focus-visible,
+header.site-header-brand .header-icon-btn:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.95);
+  outline-offset: 2px;
+}
+
 .header-nav-link:focus-visible,
 .header-icon-btn:focus-visible {
   outline: 2px solid rgba(248, 113, 113, 0.95);
@@ -314,9 +324,19 @@ html[data-theme="light"] .header-nav-link-active::after {
   background: rgba(185, 28, 28, 0.95);
 }
 
+html[data-theme="light"] header.site-header-brand .header-nav-link-active::after {
+  background: rgba(255, 255, 255, 0.92);
+}
+
 html[data-theme="light"] .header-nav-link:focus-visible,
 html[data-theme="light"] .header-icon-btn:focus-visible {
   outline: 2px solid rgba(185, 28, 28, 0.95);
+  outline-offset: 2px;
+}
+
+html[data-theme="light"] header.site-header-brand .header-nav-link:focus-visible,
+html[data-theme="light"] header.site-header-brand .header-icon-btn:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.95);
   outline-offset: 2px;
 }
 
