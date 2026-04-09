@@ -3,7 +3,7 @@ import { test, expect } from "@playwright/test";
 test("home loads and has main landmark", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("main")).toBeVisible();
-  await expect(page.getByText("CLOG TV WORLD", { exact: false })).toBeVisible();
+  await expect(page.getByRole("link", { name: "CLOG TV WORLD" })).toBeVisible();
 });
 
 test("news search page responds", async ({ page }) => {
