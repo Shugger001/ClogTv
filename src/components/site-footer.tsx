@@ -1,8 +1,14 @@
 import Link from "next/link";
 
+type FooterLink = {
+  href: string;
+  label: string;
+  external?: boolean;
+};
+
 export function SiteFooter() {
   const year = new Date().getFullYear();
-  const footerColumns = [
+  const footerColumns: { heading: string; links: FooterLink[] }[] = [
     {
       heading: "News",
       links: [
@@ -25,6 +31,15 @@ export function SiteFooter() {
         { href: "/watch-live", label: "Watch Live" },
         { href: "/", label: "World" },
         { href: "/", label: "Culture" },
+      ],
+    },
+    {
+      heading: "Social & media",
+      links: [
+        { href: "https://x.com/", label: "X", external: true },
+        { href: "https://www.facebook.com/", label: "Facebook", external: true },
+        { href: "https://www.youtube.com/", label: "YouTube", external: true },
+        { href: "/admin#media-library", label: "Media library" },
       ],
     },
   ];
@@ -59,7 +74,7 @@ export function SiteFooter() {
         </div>
 
         <nav
-          className="grid grid-cols-2 gap-x-6 gap-y-4 py-4 sm:grid-cols-3"
+          className="grid grid-cols-2 gap-x-6 gap-y-4 py-4 sm:grid-cols-2 lg:grid-cols-4"
           aria-label="Footer navigation"
         >
           {footerColumns.map((column) => (
@@ -70,9 +85,20 @@ export function SiteFooter() {
               <ul className="space-y-1">
                 {column.links.map((link) => (
                   <li key={link.label}>
-                    <Link href={link.href} className="transition hover:text-white">
-                      {link.label}
-                    </Link>
+                    {link.external ? (
+                      <a
+                        href={link.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="transition hover:text-white"
+                      >
+                        {link.label}
+                      </a>
+                    ) : (
+                      <Link href={link.href} className="transition hover:text-white">
+                        {link.label}
+                      </Link>
+                    )}
                   </li>
                 ))}
               </ul>

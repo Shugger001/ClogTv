@@ -95,7 +95,7 @@ export default async function AdminPage() {
         <UserManager />
       </section>
 
-      <section className="mt-6">
+      <section id="media-library" className="mt-6 scroll-mt-24">
         <MediaLibrary />
       </section>
     </RouteShell>
