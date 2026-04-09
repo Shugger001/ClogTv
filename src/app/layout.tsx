@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { AppProviders } from "@/providers/app-providers";
+import { SiteFooter } from "@/components/site-footer";
 
 export const metadata: Metadata = {
   title: "CLOG TV World Platform",
@@ -25,7 +26,10 @@ export default function RootLayout({
         <a href="#main-content" className="skip-link">
           Skip to content
         </a>
-        <AppProviders>{children}</AppProviders>
+        <div className="flex-1">
+          <AppProviders>{children}</AppProviders>
+        </div>
+        <SiteFooter />
       </body>
     </html>
   );
