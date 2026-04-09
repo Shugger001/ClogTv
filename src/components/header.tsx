@@ -88,6 +88,13 @@ export function Header() {
             >
               {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
             </button>
+            <Link
+              href="/admin"
+              className={`whitespace-nowrap text-[10px] uppercase tracking-[0.12em] sm:text-xs sm:tracking-[0.15em] ${navClass("/admin")}`}
+              aria-current={isActive("/admin") ? "page" : undefined}
+            >
+              Admin
+            </Link>
             <HeaderAccount
               triggerClassName="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/35 bg-white/10 text-white transition hover:bg-white/20 hover:text-white"
             />
@@ -158,14 +165,6 @@ export function Header() {
                     Live
                   </Link>
                   <Link
-                    href="/admin"
-                    className={navClass("/admin")}
-                    aria-current={isActive("/admin") ? "page" : undefined}
-                    onClick={() => setMobileOpen(false)}
-                  >
-                    Admin
-                  </Link>
-                  <Link
                     href="/notifications"
                     className={navClass("/notifications")}
                     aria-current={isActive("/notifications") ? "page" : undefined}
@@ -214,9 +213,6 @@ export function Header() {
             </Link>
             <Link href="/live" className={navClass("/live")} aria-current={isActive("/live") ? "page" : undefined}>
               Live
-            </Link>
-            <Link href="/admin" className={navClass("/admin")} aria-current={isActive("/admin") ? "page" : undefined}>
-              Admin
             </Link>
             <Link
               href="/notifications"

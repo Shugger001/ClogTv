@@ -1,0 +1,18 @@
+---
+description: Ship code changes to GitHub and Vercel production after implementation work
+alwaysApply: true
+---
+
+# Deploy to Vercel after changes
+
+When you complete user-requested **implementation work** in this repo (code, styles, config that should go live):
+
+1. Run **`npm run lint`** (and fix issues) before committing when TypeScript/React files changed.
+2. **Commit** with a clear message and **push** to **`main`**:  
+   `git add …` → `git commit -m "…"` → `git push origin main`  
+   (GitHub integration on Vercel will usually trigger a production deployment from the push.)
+3. Also run **`npm run deploy:vercel`** so the linked Vercel project gets a **CLI production deploy** from the local tree.  
+   - Requires network; may fail if the machine is not logged into the Vercel CLI (`vercel login`).  
+   - If the command fails for auth, tell the user to deploy via the Vercel dashboard or run `vercel login` locally.
+
+Skip the git/deploy steps only when the user explicitly asks not to commit or deploy, or when changes are clearly local/experimental and they said so.

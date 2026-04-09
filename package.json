@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "deploy:vercel": "npx --yes vercel@latest --prod --yes"
   },
   "dependencies": {
     "@supabase/ssr": "^0.10.0",
