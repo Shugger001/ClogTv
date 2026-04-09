@@ -3,10 +3,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import { Menu, Search, X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { HeaderAccount } from "@/components/header-account";
 import { PreferencesControls } from "@/components/ui/preferences-controls";
+import { SectionContextBar } from "@/components/section-context-bar";
 
 export function Header() {
   const pathname = usePathname();
@@ -78,6 +79,24 @@ export function Header() {
             CLOG TV WORLD
           </Link>
           <div className="flex shrink-0 items-center gap-2 md:gap-3">
+            <nav
+              className="mr-1 hidden items-center gap-3 text-[10px] font-medium uppercase tracking-[0.14em] text-white/75 md:flex"
+              aria-label="Utility navigation"
+            >
+              <Link href="/contact" className="transition hover:text-white">
+                Contact
+              </Link>
+              <Link href="/sitemap" className="transition hover:text-white">
+                Sitemap
+              </Link>
+            </nav>
+            <Link
+              href="/news#news-search"
+              className="header-icon-btn flex h-9 w-9 items-center justify-center rounded-full border border-white/35 bg-white/10 text-white transition hover:bg-white/20"
+              aria-label="Search news"
+            >
+              <Search className="h-4 w-4" />
+            </Link>
             <button
               ref={menuButtonRef}
               type="button"
@@ -239,6 +258,7 @@ export function Header() {
             <PreferencesControls />
           </div>
         </div>
+        <SectionContextBar />
       </div>
     </header>
   );

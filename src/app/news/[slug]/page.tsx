@@ -2,6 +2,9 @@ import Image from "next/image";
 import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { ArticleReadingProgress } from "@/components/article-reading-progress";
+import { BackToTop } from "@/components/back-to-top";
+import { Breadcrumbs } from "@/components/breadcrumbs";
 import { BookmarkButton } from "@/components/bookmark-button";
 import { Header } from "@/components/header";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -13,6 +16,17 @@ const CommentsSection = dynamic(
 
 interface ArticlePageProps {
   params: Promise<{ slug: string }>;
+}
+
+function resolveCategoryName(categories: unknown): string {
+  if (Array.isArray(categories)) {
+    const first = categories[0] as { name?: string } | undefined;
+    return first?.name ?? "News";
+  }
+  if (categories && typeof categories === "object" && "name" in categories) {
+    return String((categories as { name: string }).name);
+  }
+  return "News";
 }
 
 export default async function ArticlePage({ params }: ArticlePageProps) {
@@ -45,26 +59,46 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     .neq("id", article.id)
     .limit(4);
 
+  const categoryName = resolveCategoryName(article.categories);
+  const titleShort =
+    article.title.length > 56 ? `${article.title.slice(0, 56)}…` : article.title;
+
   return (
     <div className="min-h-screen text-foreground">
+      <ArticleReadingProgress />
       <Header />
       <main
         id="main-content"
         aria-label="Article content"
         className="mx-auto grid max-w-7xl gap-6 px-6 py-8 lg:grid-cols-[minmax(0,1fr)_300px]"
       >
-        <article className="ui-card density-card">
+        <article id="article-body" className="ui-card density-card">
+          <Breadcrumbs
+            items={[
+              { label: "Home", href: "/" },
+              { label: "News", href: "/news" },
+              {
+                label: categoryName,
+                href: `/news?category=${encodeURIComponent(categoryName)}`,
+              },
+              { label: titleShort },
+            ]}
+          />
           <div className="mb-4 border-b border-[color:var(--border)] pb-3">
-            <p className="text-xs uppercase tracking-[0.2em] text-red-300">
-              {article.categories?.[0]?.name ?? "News"}
-            </p>
+            <p className="text-xs uppercase tracking-[0.2em] text-red-300">{categoryName}</p>
             <h1 className="headline-display mt-2 text-4xl font-semibold leading-tight">{article.title}</h1>
             <p className="ui-muted mt-2 text-sm uppercase tracking-[0.14em]">
               By ClogTv News Desk | {article.views} views | {article.read_time} min read
             </p>
             {article.summary ? <p className="ui-muted mt-3 max-w-3xl text-base leading-7">{article.summary}</p> : null}
-            <div className="mt-4">
+            <div className="mt-4 flex flex-wrap items-center gap-3">
               <BookmarkButton articleId={article.id} />
+              <Link
+                href={`/news?category=${encodeURIComponent(categoryName)}`}
+                className="text-xs uppercase tracking-[0.16em] text-red-300/90 underline-offset-4 hover:underline"
+              >
+                More in {categoryName}
+              </Link>
             </div>
           </div>
           {article.featured_image ? (
@@ -112,7 +146,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           </section>
         </aside>
       </main>
-
+      <BackToTop />
     </div>
   );
 }

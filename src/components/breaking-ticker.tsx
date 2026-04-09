@@ -1,11 +1,13 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { useBreakingNews } from "@/hooks/use-breaking-news";
 
 export function BreakingTicker() {
   const { data, isLoading } = useBreakingNews();
   const headlines = data?.slice(0, 8).map((item) => item.title) ?? [];
+  const reduceMotion = useReducedMotion();
+  const list = isLoading ? ["Loading newsroom feed..."] : [...headlines, ...headlines];
 
   return (
     <section
@@ -17,18 +19,22 @@ export function BreakingTicker() {
           Breaking
         </span>
         <div className="relative w-full overflow-hidden">
-          <motion.div
-            className="flex gap-12 whitespace-nowrap text-sm text-white/95"
-            initial={{ x: "0%" }}
-            animate={{ x: "-50%" }}
-            transition={{ ease: "linear", duration: 25, repeat: Infinity }}
-          >
-            {(isLoading ? ["Loading newsroom feed..."] : [...headlines, ...headlines]).map(
-              (headline, index) => (
+          {reduceMotion ? (
+            <p className="text-sm leading-relaxed text-white/95">
+              {(isLoading ? ["Loading newsroom feed..."] : headlines).join(" · ")}
+            </p>
+          ) : (
+            <motion.div
+              className="flex gap-12 whitespace-nowrap text-sm text-white/95"
+              initial={{ x: "0%" }}
+              animate={{ x: "-50%" }}
+              transition={{ ease: "linear", duration: 25, repeat: Infinity }}
+            >
+              {list.map((headline, index) => (
                 <span key={`${headline}-${index}`}>{headline}</span>
-              ),
-            )}
-          </motion.div>
+              ))}
+            </motion.div>
+          )}
         </div>
       </div>
     </section>

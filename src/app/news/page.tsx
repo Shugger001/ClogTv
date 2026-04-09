@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Breadcrumbs } from "@/components/breadcrumbs";
 import { Header } from "@/components/header";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -75,12 +76,39 @@ export default async function NewsPage({ searchParams }: NewsPageProps) {
 
   const trending = (articles ?? []).slice().sort((a, b) => b.views - a.views).slice(0, 5);
 
+  const categoryHubs = ["News", "Politics", "Entertainment", "Sports", "Business", "Technology"] as const;
+
   return (
     <div className="min-h-screen text-foreground">
       <Header />
       <main id="main-content" aria-label="News discovery content" className="mx-auto max-w-7xl px-6 py-8">
-        <section className="ui-card density-card">
+        <Breadcrumbs
+          items={[
+            { label: "Home", href: "/" },
+            { label: "News", href: "/news" },
+            ...(category !== "All" ? [{ label: category }] : []),
+          ]}
+        />
+        <nav className="mb-4 flex flex-wrap gap-2" aria-label="Browse by category">
+          {categoryHubs.map((name) => (
+            <Link
+              key={name}
+              href={`/news/category/${name.toLowerCase()}`}
+              className={`rounded-full border px-3 py-1 text-[11px] font-medium uppercase tracking-wider transition ${
+                category === name
+                  ? "border-red-400/60 bg-red-950/40 text-red-200"
+                  : "border-white/15 bg-white/[0.04] text-white/80 hover:border-red-400/40 hover:text-red-200"
+              }`}
+            >
+              {name}
+            </Link>
+          ))}
+        </nav>
+        <section id="news-search" className="ui-card density-card scroll-mt-28">
           <h1 className="text-3xl font-semibold">Search & Discovery</h1>
+          <p className="ui-muted mt-1 text-xs">
+            Last updated on load · Refine with search, category, sort, or date.
+          </p>
           <form className="mt-4 grid gap-3 md:grid-cols-[1fr_auto_auto_auto]">
             <input
               name="q"

@@ -29,6 +29,7 @@ export function SiteFooter() {
     },
   ];
   const utilityLinks = [
+    { href: "/sitemap", label: "Sitemap" },
     { href: "/legal", label: "Legal" },
     { href: "/terms", label: "Terms of Use" },
     { href: "/privacy", label: "Privacy Policy" },

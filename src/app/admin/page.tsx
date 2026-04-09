@@ -15,6 +15,29 @@ export default async function AdminPage() {
 
   return (
     <RouteShell title="Admin Control" role={auth.role} fullName={auth.fullName}>
+      <details className="mb-6 rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm open:border-red-500/30">
+        <summary className="cursor-pointer font-medium text-foreground outline-none marker:text-red-400">
+          Who can do what here?
+        </summary>
+        <ul className="ui-muted mt-3 list-inside list-disc space-y-1.5 text-xs leading-relaxed">
+          <li>
+            <strong className="text-foreground/90">Admin</strong> — full access to categories, users, media, and
+            overview tools on this page.
+          </li>
+          <li>
+            <strong className="text-foreground/90">Editor</strong> — newsroom and publishing workflows; not this admin
+            console unless promoted.
+          </li>
+          <li>
+            <strong className="text-foreground/90">Journalist</strong> — story tools in the newsroom; no admin route
+            access.
+          </li>
+        </ul>
+        <p className="ui-muted mt-2 text-[11px]">
+          Roles are stored on your user profile in the database. Contact a lead editor if you need a different role.
+        </p>
+      </details>
+
       <section className="mb-6 density-grid grid md:grid-cols-5">
         <article className="ui-card density-card md:col-span-1">
           <p className="ui-muted text-xs uppercase tracking-[0.2em]">Overview</p>
