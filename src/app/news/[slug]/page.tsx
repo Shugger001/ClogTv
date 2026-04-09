@@ -8,6 +8,8 @@ import { BackToTop } from "@/components/back-to-top";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { BookmarkButton } from "@/components/bookmark-button";
 import { Header } from "@/components/header";
+import { NewsletterSignup } from "@/components/newsletter-signup";
+import { ArticleNewsletterExitIntent } from "@/components/article-newsletter-funnel";
 import { getSiteUrl } from "@/lib/site-url";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -18,6 +20,31 @@ const CommentsSection = dynamic(
 
 interface ArticlePageProps {
   params: Promise<{ slug: string }>;
+}
+
+interface ArticleAuthor {
+  id: string;
+  name: string | null;
+  role: string | null;
+  avatar_url: string | null;
+}
+
+interface ArticleWithRelations {
+  id: string;
+  title: string;
+  slug: string;
+  summary: string | null;
+  content: string;
+  featured_image: string | null;
+  status: string;
+  views: number;
+  read_time: number;
+  video_url: string | null;
+  published_at: string | null;
+  updated_at: string | null;
+  tags: string[] | null;
+  categories: Array<{ name?: string }> | { name?: string } | null;
+  users: ArticleAuthor | null;
 }
 
 function absoluteImageUrl(url: string | null | undefined): string | undefined {
@@ -84,6 +111,26 @@ function resolveCategoryName(categories: unknown): string {
   return "News";
 }
 
+function formatDateTime(value: string | null | undefined): string | null {
+  if (!value) return null;
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return null;
+  return new Intl.DateTimeFormat("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(date);
+}
+
+function splitStoryBlocks(content: string): string[] {
+  return content
+    .split(/\n\s*\n/g)
+    .map((block) => block.trim())
+    .filter(Boolean);
+}
+
 export default async function ArticlePage({ params }: ArticlePageProps) {
   const { slug } = await params;
   const supabase = await createSupabaseServerClient();
@@ -95,9 +142,9 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
   const { data: article } = await supabase
     .from("articles")
-    .select("*, categories(name)")
+    .select("*, categories(name), users:author_id(id,name,role,avatar_url)")
     .eq("slug", slug)
-    .maybeSingle();
+    .maybeSingle<ArticleWithRelations>();
 
   if (!article) notFound();
 
@@ -117,6 +164,21 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   const categoryName = resolveCategoryName(article.categories);
   const titleShort =
     article.title.length > 56 ? `${article.title.slice(0, 56)}…` : article.title;
+  const publishedAt = formatDateTime(article.published_at);
+  const updatedAt = formatDateTime(article.updated_at);
+  const storyBlocks = splitStoryBlocks(article.content);
+  const topics = (article.tags ?? []).slice(0, 6);
+  const authorName = article.users?.name?.trim() || "ClogTv News Desk";
+  const authorRole = article.users?.role ? `${article.users.role} desk` : "Editorial team";
+  const authorProfileHref = article.users?.id ? `/journalists/${article.users.id}` : null;
+  const sourceLinks = [
+    article.video_url
+      ? {
+          label: "Primary video source",
+          href: article.video_url,
+        }
+      : null,
+  ].filter(Boolean) as Array<{ label: string; href: string }>;
 
   return (
     <div className="min-h-screen text-foreground">
@@ -145,6 +207,11 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             <p className="ui-muted mt-2 text-sm uppercase tracking-[0.14em]">
               By ClogTv News Desk | {article.views} views | {article.read_time} min read
             </p>
+            <div className="ui-muted mt-2 flex flex-wrap items-center gap-2 text-xs uppercase tracking-[0.13em]">
+              {publishedAt ? <span>Published {publishedAt}</span> : null}
+              {publishedAt && updatedAt ? <span>|</span> : null}
+              {updatedAt ? <span>Last updated {updatedAt}</span> : null}
+            </div>
             {article.summary ? <p className="ui-muted mt-3 max-w-3xl text-base leading-7">{article.summary}</p> : null}
             <div className="mt-4 flex flex-wrap items-center gap-3">
               <BookmarkButton articleId={article.id} />
@@ -162,10 +229,51 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               alt={article.title}
               width={1200}
               height={675}
+              sizes="(max-width: 1024px) 100vw, 70vw"
               className="max-h-[420px] w-full rounded-xl object-cover"
             />
           ) : null}
-          <pre className="mt-5 whitespace-pre-wrap font-sans text-[1.03rem] leading-8">{article.content}</pre>
+          <section className="mt-5 space-y-5">
+            <div className="rounded-lg border border-[color:var(--border)] bg-black/10 p-4">
+              <p className="kicker">Byline</p>
+              <p className="mt-1 text-sm">
+                {authorName}{" "}
+                <span className="ui-muted uppercase tracking-[0.1em]">({authorRole})</span>
+              </p>
+              {authorProfileHref ? (
+                <Link href={authorProfileHref} className="mt-2 inline-block text-xs uppercase tracking-[0.16em] text-red-300/90 hover:underline">
+                  View journalist profile
+                </Link>
+              ) : null}
+            </div>
+            {storyBlocks.map((block, index) => (
+              <div key={`${article.id}-${index}`} className="space-y-4">
+                <p className="whitespace-pre-wrap font-sans text-[1.03rem] leading-8">{block}</p>
+                {index === 0 || index === 1 ? (
+                  <NewsletterSignup
+                    source={`article_inline_${index + 1}`}
+                    compact
+                    title="Get breaking updates from this storyline"
+                    description="Subscribe for fast alerts and our editor's briefing."
+                  />
+                ) : null}
+              </div>
+            ))}
+          </section>
+          {sourceLinks.length ? (
+            <section className="mt-6 border-t border-[color:var(--border)] pt-4">
+              <p className="text-xs uppercase tracking-[0.2em] text-red-300">Sources</p>
+              <ul className="mt-2 space-y-2">
+                {sourceLinks.map((source) => (
+                  <li key={source.href}>
+                    <a className="text-sm underline" href={source.href} target="_blank" rel="noreferrer">
+                      {source.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
           {article.video_url ? (
             <div className="mt-6 border-t border-[color:var(--border)] pt-4">
               <p className="text-xs uppercase tracking-[0.2em] text-red-300">Video</p>
@@ -199,9 +307,33 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               ))}
             </div>
           </section>
+          <section className="ui-card density-card">
+            <h2 className="kicker">Related topics</h2>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {topics.length ? (
+                topics.map((tag) => (
+                  <Link
+                    key={tag}
+                    href={`/news?q=${encodeURIComponent(tag)}`}
+                    className="rounded-full border border-white/15 bg-white/[0.04] px-3 py-1 text-[11px] uppercase tracking-[0.12em] hover:border-red-300/40 hover:text-red-200"
+                  >
+                    {tag}
+                  </Link>
+                ))
+              ) : (
+                <Link
+                  href={`/news?category=${encodeURIComponent(categoryName)}`}
+                  className="rounded-full border border-white/15 bg-white/[0.04] px-3 py-1 text-[11px] uppercase tracking-[0.12em] hover:border-red-300/40 hover:text-red-200"
+                >
+                  {categoryName}
+                </Link>
+              )}
+            </div>
+          </section>
         </aside>
       </main>
       <BackToTop />
+      <ArticleNewsletterExitIntent />
     </div>
   );
 }

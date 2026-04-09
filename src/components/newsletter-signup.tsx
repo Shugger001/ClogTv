@@ -2,7 +2,21 @@
 
 import { FormEvent, useState } from "react";
 
-export function NewsletterSignup() {
+interface NewsletterSignupProps {
+  title?: string;
+  description?: string;
+  source?: string;
+  className?: string;
+  compact?: boolean;
+}
+
+export function NewsletterSignup({
+  title = "Get top headlines in your inbox",
+  description = "Daily briefings, breaking alerts, and editor picks.",
+  source = "site",
+  className = "",
+  compact = false,
+}: NewsletterSignupProps) {
   const [email, setEmail] = useState("");
   const [fullName, setFullName] = useState("");
   const [status, setStatus] = useState("");
@@ -16,7 +30,7 @@ export function NewsletterSignup() {
       const response = await fetch("/api/newsletter/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, fullName }),
+        body: JSON.stringify({ email, fullName, source }),
       });
       if (!response.ok) throw new Error("Subscription failed");
       setStatus("Subscribed to newsletter.");
@@ -30,10 +44,11 @@ export function NewsletterSignup() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="ui-card density-card space-y-3">
+    <form onSubmit={onSubmit} className={`ui-card density-card space-y-3 ${className}`.trim()}>
       <p className="kicker">Newsletter</p>
-      <h3 className="headline-compact text-lg font-semibold">Get top headlines in your inbox</h3>
-      <div className="grid gap-2 md:grid-cols-2">
+      <h3 className={`headline-compact font-semibold ${compact ? "text-base" : "text-lg"}`}>{title}</h3>
+      <p className="ui-muted text-sm">{description}</p>
+      <div className={`grid gap-2 ${compact ? "md:grid-cols-1" : "md:grid-cols-2"}`}>
         <input
           value={fullName}
           onChange={(event) => setFullName(event.target.value)}
