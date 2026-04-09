@@ -76,7 +76,15 @@ export default async function NewsPage({ searchParams }: NewsPageProps) {
 
   const trending = (articles ?? []).slice().sort((a, b) => b.views - a.views).slice(0, 5);
 
-  const categoryHubs = ["News", "Politics", "Entertainment", "Sports", "Business", "Technology"] as const;
+  const categoryHubs = [
+    "News",
+    "Politics",
+    "Entertainment",
+    "Sports",
+    "Business",
+    "Technology",
+    "Culture",
+  ] as const;
 
   return (
     <div className="min-h-screen text-foreground">

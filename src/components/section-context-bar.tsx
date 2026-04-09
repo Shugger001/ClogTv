@@ -18,7 +18,10 @@ export function SectionContextBar() {
   let label: string | null = null;
   let href: string | null = null;
 
-  if (pathname === "/news" || pathname.startsWith("/news/category")) {
+  if (pathname === "/about") {
+    label = "About";
+    href = "/about";
+  } else if (pathname === "/news" || pathname.startsWith("/news/category")) {
     label = "News · Search & discovery";
     href = "/news";
   } else if (pathname.startsWith("/news/")) {

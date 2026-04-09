@@ -13,8 +13,12 @@ const sections = [
     title: "News & video",
     links: [
       { href: "/", label: "Home" },
+      { href: "/about", label: "About" },
+      { href: "/search", label: "Search" },
       { href: "/news", label: "News search & discovery" },
-      { href: "/news/category/politics", label: "Politics (category)" },
+      { href: "/news/category/business", label: "Business" },
+      { href: "/news/category/culture", label: "Culture" },
+      { href: "/news/category/politics", label: "Politics" },
       { href: "/watch-live", label: "Watch live" },
       { href: "/live", label: "Live control" },
     ],

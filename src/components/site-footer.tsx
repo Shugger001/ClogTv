@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { siteSocial } from "@/config/site";
 
 type FooterLink = {
   href: string;
@@ -30,15 +31,15 @@ export function SiteFooter() {
       links: [
         { href: "/watch-live", label: "Watch Live" },
         { href: "/", label: "World" },
-        { href: "/", label: "Culture" },
+        { href: "/news/category/culture", label: "Culture" },
       ],
     },
     {
       heading: "Social & media",
       links: [
-        { href: "https://x.com/", label: "X", external: true },
-        { href: "https://www.facebook.com/", label: "Facebook", external: true },
-        { href: "https://www.youtube.com/", label: "YouTube", external: true },
+        { href: siteSocial.x, label: "X", external: true },
+        { href: siteSocial.facebook, label: "Facebook", external: true },
+        { href: siteSocial.youtube, label: "YouTube", external: true },
         { href: "/admin#media-library", label: "Media library" },
       ],
     },

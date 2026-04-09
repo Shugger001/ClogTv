@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 import { AppProviders } from "@/providers/app-providers";
-import { MobileTabBar } from "@/components/mobile-tab-bar";
+import { AuthLayoutChrome } from "@/components/auth-layout-chrome";
 import { SiteFooter } from "@/components/site-footer";
 
 export const metadata: Metadata = {
@@ -23,15 +24,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full antialiased">
-      <body className="min-h-full flex flex-col bg-black pb-20 md:pb-0">
+      <body className="min-h-full flex flex-col bg-black">
         <a href="#main-content" className="skip-link">
           Skip to content
         </a>
-        <div className="flex-1">
-          <AppProviders>{children}</AppProviders>
-        </div>
-        <MobileTabBar />
+        <AppProviders>
+          <AuthLayoutChrome>{children}</AuthLayoutChrome>
+        </AppProviders>
         <SiteFooter />
+        <Analytics />
       </body>
     </html>
   );

@@ -83,6 +83,9 @@ export function Header() {
               className="mr-1 hidden items-center gap-3 text-[10px] font-medium uppercase tracking-[0.14em] text-white/75 md:flex"
               aria-label="Utility navigation"
             >
+              <Link href="/about" className="transition hover:text-white">
+                About
+              </Link>
               <Link href="/contact" className="transition hover:text-white">
                 Contact
               </Link>
@@ -91,7 +94,7 @@ export function Header() {
               </Link>
             </nav>
             <Link
-              href="/news#news-search"
+              href="/search"
               className="header-icon-btn flex h-9 w-9 items-center justify-center rounded-full border border-white/35 bg-white/10 text-white transition hover:bg-white/20"
               aria-label="Search news"
             >
@@ -199,6 +202,38 @@ export function Header() {
                   >
                     Bookmarks
                   </Link>
+                  <Link
+                    href="/news/category/business"
+                    className={navClass("/news/category/business")}
+                    aria-current={isActive("/news/category/business") ? "page" : undefined}
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    Business
+                  </Link>
+                  <Link
+                    href="/news/category/culture"
+                    className={navClass("/news/category/culture")}
+                    aria-current={isActive("/news/category/culture") ? "page" : undefined}
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    Culture
+                  </Link>
+                  <Link
+                    href="/about"
+                    className={navClass("/about")}
+                    aria-current={isActive("/about") ? "page" : undefined}
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    About
+                  </Link>
+                  <Link
+                    href="/search"
+                    className={navClass("/search")}
+                    aria-current={isActive("/search") ? "page" : undefined}
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    Search
+                  </Link>
                 </nav>
                 <PreferencesControls />
               </motion.div>
@@ -247,10 +282,18 @@ export function Header() {
             >
               Bookmarks
             </Link>
-            <Link href="/" className={navClass("/")} aria-current={isActive("/") ? "page" : undefined}>
+            <Link
+              href="/news/category/business"
+              className={navClass("/news/category/business")}
+              aria-current={isActive("/news/category/business") ? "page" : undefined}
+            >
               Business
             </Link>
-            <Link href="/" className={navClass("/")} aria-current={isActive("/") ? "page" : undefined}>
+            <Link
+              href="/news/category/culture"
+              className={navClass("/news/category/culture")}
+              aria-current={isActive("/news/category/culture") ? "page" : undefined}
+            >
               Culture
             </Link>
           </nav>

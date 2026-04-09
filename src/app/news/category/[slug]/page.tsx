@@ -7,6 +7,7 @@ const SLUG_TO_CATEGORY: Record<string, string> = {
   sports: "Sports",
   business: "Business",
   technology: "Technology",
+  culture: "Culture",
 };
 
 interface PageProps {
