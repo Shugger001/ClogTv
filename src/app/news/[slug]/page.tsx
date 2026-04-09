@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
@@ -7,6 +8,7 @@ import { BackToTop } from "@/components/back-to-top";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { BookmarkButton } from "@/components/bookmark-button";
 import { Header } from "@/components/header";
+import { getSiteUrl } from "@/lib/site-url";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 const CommentsSection = dynamic(
@@ -16,6 +18,59 @@ const CommentsSection = dynamic(
 
 interface ArticlePageProps {
   params: Promise<{ slug: string }>;
+}
+
+function absoluteImageUrl(url: string | null | undefined): string | undefined {
+  if (!url) return undefined;
+  if (url.startsWith("http://") || url.startsWith("https://")) return url;
+  const base = getSiteUrl();
+  return `${base}${url.startsWith("/") ? "" : "/"}${url}`;
+}
+
+export async function generateMetadata({
+  params,
+}: ArticlePageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const supabase = await createSupabaseServerClient();
+  if (!supabase) return { title: "Article" };
+
+  const { data: article } = await supabase
+    .from("articles")
+    .select("title, summary, featured_image, published_at, updated_at, status")
+    .eq("slug", slug)
+    .maybeSingle();
+
+  if (!article || article.status !== "published") {
+    return { title: "Article" };
+  }
+
+  const base = getSiteUrl();
+  const url = `${base}/news/${slug}`;
+  const description =
+    article.summary?.trim() ||
+    `${article.title} — ClogTv News.`;
+  const ogImage = absoluteImageUrl(article.featured_image);
+
+  return {
+    title: article.title,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      type: "article",
+      url,
+      title: article.title,
+      description,
+      publishedTime: article.published_at ?? undefined,
+      modifiedTime: article.updated_at ?? undefined,
+      images: ogImage ? [{ url: ogImage }] : undefined,
+    },
+    twitter: {
+      card: ogImage ? "summary_large_image" : "summary",
+      title: article.title,
+      description,
+      images: ogImage ? [ogImage] : undefined,
+    },
+  };
 }
 
 function resolveCategoryName(categories: unknown): string {
