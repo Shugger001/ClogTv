@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { suggestHeadlinesWithProvider } from "@/lib/ai/provider";
 import { getOrCreateRequestId } from "@/lib/observability/provider-logger";
-import { captureServerException } from "@/lib/observability/sentry";
 
 export async function POST(request: Request) {
   try {
@@ -14,7 +13,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ suggestions }, { headers: { "x-request-id": requestId } });
   } catch (error) {
     const requestId = getOrCreateRequestId(request);
-    captureServerException(error, { route: "/api/ai/headlines", requestId });
+    console.error("ai_headlines_error", { requestId, error });
     return NextResponse.json(
       { error: "Unable to generate headlines right now." },
       { status: 500, headers: { "x-request-id": requestId } },

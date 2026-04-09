@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { syncNewsletterSubscriber } from "@/lib/newsletter/provider";
 import { getOrCreateRequestId } from "@/lib/observability/provider-logger";
-import { captureServerException } from "@/lib/observability/sentry";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export async function POST(request: Request) {
@@ -40,7 +39,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true }, { headers: { "x-request-id": requestId } });
   } catch (error) {
     const requestId = getOrCreateRequestId(request);
-    captureServerException(error, { route: "/api/newsletter/subscribe", requestId });
+    console.error("newsletter_subscribe_error", { requestId, error });
     return NextResponse.json(
       { error: "Unable to subscribe right now." },
       { status: 500, headers: { "x-request-id": requestId } },

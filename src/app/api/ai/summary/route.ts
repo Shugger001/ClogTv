@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { summarizeWithProvider } from "@/lib/ai/provider";
 import { getOrCreateRequestId } from "@/lib/observability/provider-logger";
-import { captureServerException } from "@/lib/observability/sentry";
 
 export async function POST(request: Request) {
   try {
@@ -14,7 +13,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ summary }, { headers: { "x-request-id": requestId } });
   } catch (error) {
     const requestId = getOrCreateRequestId(request);
-    captureServerException(error, { route: "/api/ai/summary", requestId });
+    console.error("ai_summary_error", { requestId, error });
     return NextResponse.json(
       { error: "Unable to summarize article right now." },
       { status: 500, headers: { "x-request-id": requestId } },
