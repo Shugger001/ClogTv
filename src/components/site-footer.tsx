@@ -47,6 +47,8 @@ export function SiteFooter() {
   const utilityLinks = [
     { href: "/sitemap", label: "Sitemap" },
     { href: "/legal", label: "Legal" },
+    { href: "/editorial-standards", label: "Standards" },
+    { href: "/corrections", label: "Corrections" },
     { href: "/terms", label: "Terms of Use" },
     { href: "/privacy", label: "Privacy Policy" },
     { href: "/contact", label: "Contact" },

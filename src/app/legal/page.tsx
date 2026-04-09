@@ -7,6 +7,12 @@ const legalPages = [
   { href: "/privacy", title: "Privacy Policy", description: "How personal data is handled and protected." },
   { href: "/cookies", title: "Cookies", description: "How cookies are used for security and analytics." },
   { href: "/accessibility", title: "Accessibility", description: "Our accessibility commitments and support channels." },
+  {
+    href: "/editorial-standards",
+    title: "Editorial Standards",
+    description: "Our reporting standards for accuracy, fairness, and attribution.",
+  },
+  { href: "/corrections", title: "Corrections Policy", description: "How to report errors and how updates are issued." },
   { href: "/contact", title: "Contact", description: "How to reach editorial and technical support." },
 ];
 

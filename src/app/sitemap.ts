@@ -15,6 +15,8 @@ const STATIC_PATHS: MetadataRoute.Sitemap = [
   "/privacy",
   "/cookies",
   "/accessibility",
+  "/editorial-standards",
+  "/corrections",
 ].map((path) => ({
   url: `${getSiteUrl()}${path}`,
   changeFrequency: path === "/" ? "hourly" : "daily",

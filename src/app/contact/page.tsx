@@ -11,11 +11,17 @@ export default function ContactPage() {
   return (
     <LegalPageShell ariaLabel="Contact information content" eyebrow="Support" title="Contact">
       <PolicyOnThisPage
-        sectionTitles={["Editorial Inquiries", "Account and Technical Support", "Response Time"]}
+        sectionTitles={["Editorial Inquiries", "Send a Tip", "Account and Technical Support", "Response Time"]}
       />
       <div className="divide-y divide-white/10">
         <PolicySection title="Editorial Inquiries">
           <p>For editorial matters, contact the newsroom team at support@clogtv.example.</p>
+        </PolicySection>
+        <PolicySection title="Send a Tip">
+          <p>
+            For confidential or urgent leads, use tips@clogtv.example with subject line &quot;News tip&quot;. Include secure
+            contact details if you want a follow-up from an editor.
+          </p>
         </PolicySection>
         <PolicySection title="Account and Technical Support">
           <p>For account access or platform issues, use support@clogtv.example.</p>
